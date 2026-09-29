@@ -4,8 +4,8 @@
   const STORAGE_KEY = "budgetTracker.v1";
 
   const CATEGORIES = {
-    expense: ["Food", "Transport", "Friends", "Family", "Entertainment", "Savings", "Investment", "Credit", "Other"],
-    income: ["Salary", "Business", "Freelance", "Gifts", "Friends", "Family", "Other"],
+    expense: ["Food", "Transport", "Friends", "Family", "Entertainment", "Savings", "Forex", "Business", "Credit", "Other"],
+    income: ["Salary", "Business", "Freelance", "Forex", "Gifts", "Friends", "Family", "Other"],
   };
 
   const CATEGORY_STYLE = {
@@ -15,14 +15,18 @@
     Family: { icon: "home-outline", color: "#a855f7" },
     Entertainment: { icon: "film-outline", color: "#eab308" },
     Savings: { icon: "wallet-outline", color: "#10b981" },
-    Investment: { icon: "trending-up-outline", color: "#06b6d4" },
+    Forex: { icon: "swap-horizontal-outline", color: "#06b6d4" },
     Credit: { icon: "card-outline", color: "#6366f1" },
     Salary: { icon: "briefcase-outline", color: "#10b981" },
-    Business: { icon: "storefront-outline", color: "#3b82f6" },
+    Business: { icon: "storefront-outline", color: "#84cc16" },
     Freelance: { icon: "laptop-outline", color: "#8b5cf6" },
     Gifts: { icon: "gift-outline", color: "#f43f5e" },
     Other: { icon: "ellipsis-horizontal-circle-outline", color: "#94a3b8" },
   };
+  // Categories that were renamed; saved data using the old name is moved to the new one.
+  const RENAMED = { Investment: "Forex" };
+  const renameCategory = (cat) => RENAMED[cat] || cat;
+
   const FALLBACK_STYLE = { icon: "pricetag-outline", color: "#94a3b8" };
   const styleFor = (cat) => CATEGORY_STYLE[cat] || FALLBACK_STYLE;
 
@@ -73,7 +77,7 @@
     if (obj && typeof obj === "object") {
       for (const [cat, val] of Object.entries(obj)) {
         const n = Number(val);
-        if (n > 0) out[cat] = round2(n);
+        if (n > 0) out[renameCategory(cat)] = round2(n);
       }
     }
     return out;
@@ -91,7 +95,7 @@
             id: String(t.id || uid()),
             type: t.type,
             amount: round2(Number(t.amount)),
-            category: String(t.category || "Other"),
+            category: renameCategory(String(t.category || "Other")),
             description: String(t.description || "").slice(0, 80),
             date: t.date,
           }))
