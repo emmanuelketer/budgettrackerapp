@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A simple budget tracker that keeps your data in your browser." />
+  <title>Budget Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <header class="app-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <ion-icon name="trending-up"></ion-icon>
+        </span>
+        <div>
+          <h1>Budget Tracker</h1>
+          <p class="tagline">Your money, at a glance</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <label class="sr-only" for="currency">Currency</label>
+        <select id="currency" class="pill-select" title="Currency">
+          <option value="KES">KES</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="NGN">NGN</option>
+          <option value="UGX">UGX</option>
+          <option value="TZS">TZS</option>
+          <option value="INR">INR</option>
+        </select>
+        <button id="theme-toggle" class="icon-btn" type="button" title="Toggle dark mode" aria-label="Toggle dark mode">
+          <ion-icon id="theme-icon" name="moon-outline" aria-hidden="true"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Month selector -->
+    <section class="month-bar reveal">
+      <button id="prev-month" class="icon-btn" type="button" aria-label="Previous month"><ion-icon name="chevron-back" aria-hidden="true"></ion-icon></button>
+      <h2 id="month-label">—</h2>
+      <button id="next-month" class="icon-btn" type="button" aria-label="Next month"><ion-icon name="chevron-forward" aria-hidden="true"></ion-icon></button>
+    </section>
+
+    <!-- Hero: balance + spending breakdown -->
+    <section class="hero reveal">
+      <div id="balance-card" class="balance-card">
+        <span class="balance-label"><ion-icon name="wallet-outline" aria-hidden="true"></ion-icon> Balance this month</span>
+        <span id="balance" class="balance-value">0</span>
+        <p id="savings-note" class="savings-note">&nbsp;</p>
+        <div class="balance-chips">
+          <div class="chip">
+            <span class="chip-icon up" aria-hidden="true"><ion-icon name="arrow-up"></ion-icon></span>
+            <div>
+              <span class="chip-label">Income</span>
+              <span id="income-total" class="chip-value">0</span>
+            </div>
+          </div>
+          <div class="chip">
+            <span class="chip-icon down" aria-hidden="true"><ion-icon name="arrow-down"></ion-icon></span>
+            <div>
+              <span class="chip-label">Expenses</span>
+              <span id="expense-total" class="chip-value">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card donut-card">
+        <h3><ion-icon name="pie-chart-outline" aria-hidden="true"></ion-icon> Where it went</h3>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg viewBox="0 0 120 120" role="img" aria-label="Spending by category">
+              <circle class="donut-track" cx="60" cy="60" r="52" />
+              <g id="donut-segments" transform="rotate(-90 60 60)"></g>
+            </svg>
+            <div class="donut-center">
+              <span class="donut-center-label">Spent</span>
+              <span id="donut-total" class="donut-center-value">0</span>
+            </div>
+          </div>
+          <ul id="donut-legend" class="legend"></ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid reveal">
+      <!-- Add / edit transaction -->
+      <section class="card" id="form-card">
+        <h3><ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon> <span id="form-title">Add transaction</span></h3>
+        <form id="tx-form" autocomplete="off">
+          <div class="type-toggle" id="type-toggle" data-type="expense" role="radiogroup" aria-label="Transaction type">
+            <span class="toggle-pill" aria-hidden="true"></span>
+            <label><input type="radio" name="type" value="expense" checked /> <span><ion-icon name="arrow-down" aria-hidden="true"></ion-icon> Expense</span></label>
+            <label><input type="radio" name="type" value="income" /> <span><ion-icon name="arrow-up" aria-hidden="true"></ion-icon> Income</span></label>
+          </div>
+
+          <label for="amount">Amount</label>
+          <input id="amount" class="amount-input" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="0.00" />
+
+          <div class="field-row">
+            <div>
+              <label for="category">Category</label>
+              <select id="category" required></select>
+            </div>
+            <div>
+              <label for="date">Date</label>
+              <input id="date" type="date" required />
+            </div>
+          </div>
+
+          <label for="description">Description</label>
+          <input id="description" type="text" maxlength="80" placeholder="e.g. Lunch with friends" />
+
+          <div class="form-actions">
+            <button type="submit" class="btn primary" id="submit-btn"><ion-icon name="add" aria-hidden="true"></ion-icon> <span id="submit-label">Add transaction</span></button>
+            <button type="button" class="btn ghost" id="cancel-edit" hidden>Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Budgets -->
+      <section class="card">
+        <div class="card-head">
+          <h3><ion-icon name="speedometer-outline" aria-hidden="true"></ion-icon> Budgets</h3>
+          <button id="edit-budgets" class="btn small ghost" type="button"><ion-icon name="options-outline" aria-hidden="true"></ion-icon> Edit limits</button>
+        </div>
+        <div class="period-tabs" id="period-tabs" role="tablist" aria-label="Budget period">
+          <span class="period-indicator" aria-hidden="true"></span>
+          <button type="button" role="tab" data-period="daily">Daily</button>
+          <button type="button" role="tab" data-period="weekly">Weekly</button>
+          <button type="button" role="tab" data-period="monthly">Monthly</button>
+          <button type="button" role="tab" data-period="yearly">Yearly</button>
+        </div>
+        <p class="muted small-text period-range"><ion-icon name="calendar-outline" aria-hidden="true"></ion-icon> <span id="period-range">&nbsp;</span></p>
+        <ul id="budget-list" class="budget-list"></ul>
+
+        <form id="budget-form" hidden>
+          <div id="budget-inputs"></div>
+          <div class="form-actions">
+            <button type="submit" class="btn primary"><ion-icon name="checkmark" aria-hidden="true"></ion-icon> <span id="save-budgets-label">Save budgets</span></button>
+            <button type="button" class="btn ghost" id="cancel-budgets">Cancel</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- Transactions -->
+    <section class="card reveal">
+      <div class="card-head">
+        <h3><ion-icon name="receipt-outline" aria-hidden="true"></ion-icon> Transactions</h3>
+        <div class="filters">
+          <label class="sr-only" for="search">Search</label>
+          <div class="search-wrap">
+            <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+            <input id="search" type="search" placeholder="Search…" />
+          </div>
+          <label class="sr-only" for="filter-type">Filter by type</label>
+          <select id="filter-type">
+            <option value="all">All</option>
+            <option value="income">Income</option>
+            <option value="expense">Expenses</option>
+          </select>
+        </div>
+      </div>
+      <ul id="tx-list" class="tx-list"></ul>
+      <div id="empty-state" class="muted empty"><ion-icon name="file-tray-outline" aria-hidden="true"></ion-icon><span id="empty-text">No transactions for this month yet.</span></div>
+    </section>
+
+    <!-- Data management -->
+    <section class="card data-card reveal">
+      <div>
+        <h3><ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon> Your data</h3>
+        <p class="muted small-text">
+          Everything is saved in this browser only (localStorage). Export a backup to move it to another device.
+        </p>
+      </div>
+      <div class="form-actions">
+        <button id="export-btn" class="btn ghost" type="button"><ion-icon name="download-outline" aria-hidden="true"></ion-icon> Export JSON</button>
+        <button id="export-csv-btn" class="btn ghost" type="button"><ion-icon name="grid-outline" aria-hidden="true"></ion-icon> Export CSV</button>
+        <label class="btn ghost" for="import-file" tabindex="0" role="button"><ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon> Import JSON</label>
+        <input id="import-file" type="file" accept="application/json,.json" hidden />
+        <button id="clear-btn" class="btn danger" type="button"><ion-icon name="trash-outline" aria-hidden="true"></ion-icon> Clear all data</button>
+      </div>
+    </section>
+
+    <footer class="footer muted"><ion-icon name="lock-closed-outline" aria-hidden="true"></ion-icon> Data never leaves your device</footer>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.4.0/dist/ionicons/ionicons.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
