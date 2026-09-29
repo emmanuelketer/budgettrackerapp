@@ -85,11 +85,5 @@ On import, the data is checked. Transactions with an invalid type, a non-positiv
 
 All data stays on your device. Clearing your browser's site data, or using a private window, will erase it. Use **Export JSON** regularly if you want a backup, or to move your data to another device or browser.
 
-## Work in progress
-
-The page markup includes some UI that `app.js` does not use yet:
-
-- The **"Where it went"** spending donut chart and its legend
-- The **savings note** under the balance
-- The **Daily / Weekly / Yearly** budget period tabs. Budgets are currently monthly only.
-- **GSAP** is loaded, but no animations use it yet.
+## Author
+- [@emmanuelketer](https://github.com/emmanuelketer)
