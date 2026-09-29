@@ -4,7 +4,7 @@
   const STORAGE_KEY = "budgetTracker.v1";
 
   const CATEGORIES = {
-    expense: ["Food", "Transport", "Friends", "Family", "Entertainment", "Savings", "Investment", "Other"],
+    expense: ["Food", "Transport", "Friends", "Family", "Entertainment", "Savings", "Investment", "Credit", "Other"],
     income: ["Salary", "Business", "Freelance", "Gifts", "Friends", "Family", "Other"],
   };
 
@@ -16,6 +16,7 @@
     Entertainment: { icon: "film-outline", color: "#eab308" },
     Savings: { icon: "wallet-outline", color: "#10b981" },
     Investment: { icon: "trending-up-outline", color: "#06b6d4" },
+    Credit: { icon: "card-outline", color: "#6366f1" },
     Salary: { icon: "briefcase-outline", color: "#10b981" },
     Business: { icon: "storefront-outline", color: "#3b82f6" },
     Freelance: { icon: "laptop-outline", color: "#8b5cf6" },
